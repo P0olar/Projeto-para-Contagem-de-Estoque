@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Adicionar Produtos{% endblock %}
+
+{% block content %}
+<br>
+<h1>Contagem de Venda</h1>
+<form id="addForm">
+    <label for="produtos">Produtos:</label><br>
+    <input type="text" id="produtos" class="campo" name="produtos" required><br>
+    <button type="submit">Adicionar</button>
+</form>
+
+<script>
+    document.getElementById('addForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var produtos = document.getElementById('produtos').value.split(',');
+        fetch('/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ produtos: produtos })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('produtos').value = '';
+            } else {
+                alert('Erro ao adicionar produtos.');
+            }
+        });
+    });
+</script>
+{% endblock %}

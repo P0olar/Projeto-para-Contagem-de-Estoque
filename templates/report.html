@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Relatório de Produtos Bipados</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Produto</th>
+            <th>Nome</th>
+            <th>SKU</th>
+            <th>Quantidade Bipada</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for produto, info in contagem_produtos.items() %}
+        <tr>
+            <td>{{ produto }}</td>
+            <td>{{ info.nome }}</td>
+            <td>{{ info.sku }}</td>
+            <td>{{ info.contagem }}</td>
+            <td>
+                <button onclick="removerProduto('{{ produto }}')">Remover</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+function removerProduto(produto) {
+    fetch('/remove', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ produto: produto })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Produto removido com sucesso!');
+            // Recarregar a página para atualizar o relatório
+            location.reload();
+        } else {
+            alert('Erro ao remover o produto: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro ao remover o produto:', error);
+        alert('Erro ao remover o produto. Verifique o console para mais detalhes.');
+    });
+}
+</script>
+{% endblock %}
